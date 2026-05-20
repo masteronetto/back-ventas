@@ -30,10 +30,10 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull daniel0netto/back-ventas:latest
-            docker stop back-ventas || true
-            docker rm back-ventas || true
-            docker run -d --name back-ventas -p 8080:8080 \
+            sudo docker pull daniel0netto/back-ventas:latest
+            sudo docker stop back-ventas || true
+            sudo docker rm back-ventas || true
+            sudo docker run -d --name back-ventas -p 8080:8080 \
               -e DB_ENDPOINT=mysql \
               -e DB_PORT=3306 \
               -e DB_NAME=ventas_db \
