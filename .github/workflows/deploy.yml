@@ -20,7 +20,7 @@ jobs:
 
       - name: Build y Push imagen
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest ./Springboot-API-REST
           docker push ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest
 
       - name: Deploy en EC2 Backend
@@ -30,13 +30,12 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo docker pull daniel0netto/back-ventas:latest
-            sudo docker stop back-ventas || true
-            sudo docker rm back-ventas || true
-            sudo docker run -d --name back-ventas -p 8080:8080 \
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest
+            sudo docker rm -f back-ventas 2>/dev/null || true
+            sudo docker run --detach --name back-ventas --publish 8080:8080 \
               -e DB_ENDPOINT=mysql \
               -e DB_PORT=3306 \
               -e DB_NAME=ventas_db \
               -e DB_USERNAME=ventas_user \
               -e DB_PASSWORD=ventas_pass \
-              daniel0netto/back-ventas:latest
+              ${{ secrets.DOCKER_USERNAME }}/back-ventas:latest
